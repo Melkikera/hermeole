@@ -1,0 +1,16 @@
+/node_modules
+/dist
+/.env
+.DS_Store
+/build
+/.vscode
+/logs
+/*.log
+/coverage
+/.idea
+/.cache
+/.turbo
+/out
+/.next
+/.dotnet
+/.gradle

@@ -1,0 +1,8 @@
+{
+  "android": {
+    "package": "com.anonymous.hermeole"
+  },
+  "plugins": [
+    "expo-secure-store"
+  ]
+}
