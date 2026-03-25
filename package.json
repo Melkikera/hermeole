@@ -1,9 +1,9 @@
 {
-  "name": "Hermeole",
+  "name": "hermeole",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "test": "jest",
