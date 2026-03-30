@@ -34,12 +34,14 @@ export const loginUser = async (email: string, password: string) => {
     }
 };
 
-export const registerUser = async (email: string, password: string) => {
+export const registerUser = async (userName: string, email: string, password: string,name:string) => {
     console.log('Attempting to register user with email:', email);
     try {
         const response = await axios.post(`${API_URL}/users`, {
+            userName,
             email,
-            password
+            password,
+            name
         });
         console.log('Registration response status:', response);
     } catch (error) {

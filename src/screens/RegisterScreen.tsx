@@ -3,14 +3,20 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { registerUser } from '../services/authService';
 
 const RegisterScreen = () => {
-    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
+    const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    const handleNameChange = (value: string) => {
+        setName(value);
+        setUserName(value);
+    };
+
     const handleRegister = async () => {
         try {
-            const result = await registerUser(email, password);
+            const result = await registerUser(userName, email, password,name);
             // Handle successful registration (e.g., navigate to login or dashboard)
 
         } catch (err) {
@@ -24,6 +30,18 @@ const RegisterScreen = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Register</Text>
             {error ? <Text style={styles.error}>{error}</Text> : null}
+            <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={handleNameChange}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="UserName"
+                value={userName}
+                onChangeText={setUserName}
+            />
             <TextInput
                 style={styles.input}
                 placeholder="Email"
