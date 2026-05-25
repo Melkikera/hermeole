@@ -1,8 +1,32 @@
 {
-  "android": {
-    "package": "com.anonymous.hermeole"
-  },
-  "plugins": [
-    "expo-secure-store"
-  ]
+  "expo": {
+    "name": "hermeole",
+    "slug": "hermeole",
+    "version": "1.0.0",
+    "scheme": "hermeole",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.anonymous.hermeole",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
+  }
 }

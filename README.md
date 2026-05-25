@@ -44,6 +44,17 @@ From the project root, run:
 npx expo run:android
 ```
 
+Or use the auto-emulator command:
+
+```
+npm run android:auto
+```
+
+This command will:
+- start the first available Android AVD if no emulator is running,
+- wait for ADB to detect it,
+- then run `expo run:android`.
+
 This command builds the native Android app, installs it on the selected device/emulator, and starts Metro.
 
 ### Troubleshooting
