@@ -6,10 +6,4 @@
             <certificates src="user"/>
         </trust-anchors>
     </domain-config>
-    <domain-config>
-        <domain includeSubdomains="true">10.0.2.2</domain>
-        <trust-anchors>
-            <certificates src="system"/>
-        </trust-anchors>
-    </domain-config>
 </network-security-config>

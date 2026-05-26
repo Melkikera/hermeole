@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const BACKEND_BASE_URL = 'https://10.0.2.2:7158/api';
+export const BACKEND_BASE_URL = 'http://10.0.2.2:7158/api';
 
 export const BACKEND_ENDPOINTS = {
     root: '/',

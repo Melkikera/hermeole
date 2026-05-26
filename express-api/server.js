@@ -10,10 +10,10 @@ app.use(express.json());
 const users = [
   {
     id: 1,
-    userName: 'demo',
-    email: 'demo@example.com',
-    password: 'demo1234',
-    name: 'Demo User',
+    userName: 'Iron Man',
+    email: 'tony.starks@email.com',
+    password: 'Ankara78*',
+    name: 'Tony Stark',
   },
 ];
 
@@ -87,6 +87,19 @@ app.post('/api/users', (req, res) => {
   });
 });
 
-app.listen(port, '0.0.0.0', () => {
+const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Express API running on http://0.0.0.0:${port}/api`);
+});
+
+server.on('error', (error) => {
+  if (error && error.code === 'EADDRINUSE') {
+    console.log(
+      `Express API is already running on http://0.0.0.0:${port}/api (port ${port} is in use).`
+    );
+    process.exit(0);
+    return;
+  }
+
+  console.error('Failed to start Express API:', error);
+  process.exit(1);
 });

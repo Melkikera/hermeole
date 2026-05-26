@@ -7,7 +7,7 @@ async function save(key: string, value :string) {
 }
 
 console.log('API_URL:', `${BACKEND_BASE_URL}/login`);
-export const loginUser = async (email: string, password: string) => {    
+export const loginUser = async (email: string, password: string) => {  
     console.log('Attempting to log in user with email:', email);
     try {
         const response = await backendApi.post('/login', {
