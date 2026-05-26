@@ -55,6 +55,13 @@ This command will:
 - wait for ADB to detect it,
 - then run `expo run:android`.
 
+Optional: choose a specific AVD by setting `ANDROID_AVD` before running:
+
+```powershell
+$env:ANDROID_AVD="Pixel_9a"
+npm run android:auto
+```
+
 This command builds the native Android app, installs it on the selected device/emulator, and starts Metro.
 
 ### Troubleshooting
@@ -94,6 +101,24 @@ npx expo run:android
 
 - **OpenWeather API**: Used for fetching weather data based on user location.
 - **PRIM API**: Used for retrieving relevant data for users.
+
+## Local Express API
+
+A minimal local API is available in `express-api/` with routes:
+
+- `GET /api`
+- `GET /api/health`
+- `POST /api/login`
+- `POST /api/users`
+
+Run it from the project root:
+
+```
+npm install --prefix ./express-api
+npm run api
+```
+
+The mobile app points to `http://10.0.2.2:7158/api` in the Android emulator.
 
 ## Folder Structure
 

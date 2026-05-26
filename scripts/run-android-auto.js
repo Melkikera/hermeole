@@ -32,18 +32,31 @@ if (!SDK_ROOT) {
 
 const adb = path.join(SDK_ROOT, 'platform-tools', process.platform === 'win32' ? 'adb.exe' : 'adb');
 const emulator = path.join(SDK_ROOT, 'emulator', process.platform === 'win32' ? 'emulator.exe' : 'emulator');
+const PREFERRED_AVD = process.env.ANDROID_AVD;
 
 function run(cmd, args) {
   return spawnSync(cmd, args, { encoding: 'utf8' });
 }
 
-function hasRunningEmulator() {
-  const out = run(adb, ['devices']);
-  const text = `${out.stdout || ''}\n${out.stderr || ''}`;
-  return /emulator-\d+\s+device/i.test(text);
+function ensureAdbServerRunning() {
+  const out = run(adb, ['start-server']);
+  if (out.error) {
+    throw new Error('Failed to start ADB server. Verify your Android SDK platform-tools installation.');
+  }
 }
 
-function getFirstAvd() {
+function getRunningEmulatorSerial() {
+  const out = run(adb, ['devices']);
+  const text = `${out.stdout || ''}\n${out.stderr || ''}`;
+  const match = text.match(/(emulator-\d+)\s+device/i);
+  return match ? match[1] : null;
+}
+
+function hasRunningEmulator() {
+  return Boolean(getRunningEmulatorSerial());
+}
+
+function getAvdToStart() {
   const out = run(emulator, ['-list-avds']);
   if (out.error) {
     return null;
@@ -52,6 +65,11 @@ function getFirstAvd() {
     .split(/\r?\n/)
     .map((s) => s.trim())
     .filter(Boolean);
+
+  if (PREFERRED_AVD) {
+    return avds.find((name) => name.toLowerCase() === PREFERRED_AVD.toLowerCase()) || null;
+  }
+
   return avds[0] || null;
 }
 
@@ -67,7 +85,29 @@ function waitForDevice(timeoutMs = 180000, intervalMs = 2000) {
   return new Promise((resolve, reject) => {
     const start = Date.now();
     const timer = setInterval(() => {
-      if (hasRunningEmulator()) {
+      const serial = getRunningEmulatorSerial();
+      if (serial) {
+        clearInterval(timer);
+        resolve(serial);
+        return;
+      }
+
+      if (Date.now() - start > timeoutMs) {
+        clearInterval(timer);
+        reject(new Error('Timed out waiting for Android emulator to be ready.'));
+      }
+    }, intervalMs);
+  });
+}
+
+function waitForBootCompleted(serial, timeoutMs = 180000, intervalMs = 3000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const timer = setInterval(() => {
+      const out = run(adb, ['-s', serial, 'shell', 'getprop', 'sys.boot_completed']);
+      const bootCompleted = (out.stdout || '').trim() === '1';
+
+      if (bootCompleted) {
         clearInterval(timer);
         resolve();
         return;
@@ -75,7 +115,7 @@ function waitForDevice(timeoutMs = 180000, intervalMs = 2000) {
 
       if (Date.now() - start > timeoutMs) {
         clearInterval(timer);
-        reject(new Error('Timed out waiting for Android emulator to be ready.'));
+        reject(new Error('Timed out waiting for Android emulator boot completion.'));
       }
     }, intervalMs);
   });
@@ -92,14 +132,22 @@ function runExpoAndroid() {
 }
 
 async function main() {
+  ensureAdbServerRunning();
+
   if (hasRunningEmulator()) {
     console.log('Emulator already running.');
     runExpoAndroid();
     return;
   }
 
-  const avd = getFirstAvd();
+  const avd = getAvdToStart();
   if (!avd) {
+    if (PREFERRED_AVD) {
+      console.error(`Preferred AVD "${PREFERRED_AVD}" was not found.`);
+      console.error('Check available AVD names with: emulator -list-avds');
+      process.exit(1);
+    }
+
     console.error('No AVD found. Create one in Android Studio Device Manager first.');
     process.exit(1);
   }
@@ -107,7 +155,9 @@ async function main() {
   console.log(`Starting emulator: ${avd}`);
   startEmulator(avd);
   console.log('Waiting for emulator to become available in ADB...');
-  await waitForDevice();
+  const serial = await waitForDevice();
+  console.log(`Emulator detected as ${serial}. Waiting for boot completion...`);
+  await waitForBootCompleted(serial);
   console.log('Emulator is ready. Running Expo Android build...');
   runExpoAndroid();
 }
