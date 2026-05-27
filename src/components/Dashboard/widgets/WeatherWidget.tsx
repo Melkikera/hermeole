@@ -55,7 +55,7 @@ const WeatherWidget = () => {
                 <>
                     <Text style={styles.title}>{weather.location}</Text>
                     <Text style={styles.temp}>{weather.temperature}°C</Text>
-                    <Image source={{uri: `http://openweathermap.org/img/w/${weather.icon}.png`}} style={styles.tinyLogo} />                    
+                    <Image source={{uri: `https://openweathermap.org/img/wn/${weather.icon}@2x.png`}} style={styles.tinyLogo} />                    
                     <Text style={styles.description}>{weather.description}</Text>
                     <Text>Humidity: {weather.humidity}%</Text>
                     <Text>Wind Speed: {weather.windSpeed} m/s</Text>
